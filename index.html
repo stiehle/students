@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Schüler Eintragen</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <h2>Schüler eintragen</h2>
+    <hr />
+
+    <div class="line-wrapper">
+      <h3>Vorname:</h3>
+      <input id="firstName" type="text" />
+      <label for="firstName"></label>
+    </div>
+
+    <div class="line-wrapper">
+      <h3>Nachname:</h3>
+      <input id="lastName" type="text" />
+      <label for="lastName"></label>
+    </div>
+
+    <div class="line-wrapper">
+      <h3>Alter:</h3>
+      <input id="age" type="number" min="1" max="30" />
+      <label for="age"></label>
+    </div>
+
+    <div class="line-wrapper">
+      <h3>Klasse:</h3>
+      <select name="schoolClass" id="schoolClass">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+    </div>
+
+    <div class="line-wrapper">
+      <h3>Noten:</h3>
+      <div class="notes">
+        <label for="english">Englisch:</label>
+        <input id="english" type="number" min="1" max="6" />
+
+        <label for="german">Deutsch:</label>
+        <input id="german" type="number" min="1" max="6" />
+
+        <label for="math">Mathe:</label>
+        <input id="math" type="number" min="1" max="6" />
+      </div>
+    </div>
+
+    <div class="line-wrapper">
+      <button onclick="insertStudent()">Erstellen</button>
+      <button onclick="showStudents()">Anzeigen</button>
+    </div>
+
+    <div class="output-wrapper"></div>
+
+    <script src="index.js"></script>
+  </body>
+</html>
