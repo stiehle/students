@@ -12,6 +12,14 @@
   width: 85%;
 }
 
+div[name] {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0.5rem;
+  color: white;
+  background-color: black;
+}
+
 h3,
 button,
 input,
@@ -29,12 +37,12 @@ select {
 }
 
 h3 {
-  width: 7rem;
+  width: 8rem;
   text-align: end;
 }
 
 button {
-  font-size: 1em;
+  font-size: 1rem;
   width: 10rem;
   margin: 0.5rem;
 }
@@ -62,5 +70,41 @@ button {
   text-align: start;
   font-size: 0.8rem;
   overflow-y: auto;
-  height: 30vh;
+  height: 38vh;
+}
+
+.button {
+  height: 1.5rem;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  margin: auto 0;
+
+  padding: 0.2rem;
+}
+
+.action-bar {
+  display: flex;
+  justify-content: space-between;
+  width: fit-content;
+  gap: 1rem;
+  padding: 0.5rem;
+  background-color: darkgray;
+  margin: 1rem 0;
+  /* border: 1px solid blue; */
+}
+
+.action-bar:hover {
+  cursor: pointer;
+}
+
+.selected h1,
+.selected div {
+  background-color: chocolate;
+  width: fit-content;
+}
+.selected h2 {
+  background-color: rgb(213, 233, 125);
+  width: fit-content;
 }

@@ -5,18 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Schüler Eintragen</title>
     <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   </head>
   <body>
     <h2>Schüler eintragen</h2>
     <hr />
 
     <div class="line-wrapper">
-      <h3>Vorname:</h3>
-      <input id="firstName" type="text" />
-      <label for="firstName"></label>
+      <h3>Anzahl Schüler:</h3>
+      <div name="countStudents">0</div>
     </div>
 
     <div class="line-wrapper">
+      <h3>Vorname:</h3>
+      <input id="firstName" type="text" />
+      <label for="firstName"></label>
       <h3>Nachname:</h3>
       <input id="lastName" type="text" />
       <label for="lastName"></label>
@@ -53,8 +56,16 @@
     </div>
 
     <div class="line-wrapper">
+      <h3>Schüler</h3>
       <button onclick="insertStudent()">Erstellen</button>
+      <!-- <button onclick="saveStudent()">Speichern</button> -->
+      <button onclick="insertMoreStudents(100)">Mehr Schüler !</button>
       <button onclick="showStudents()">Anzeigen</button>
+    </div>
+    <div class="line-wrapper">
+      <h3>Local Storage</h3>
+      <button style="background-color: green" onclick="loadSchoolFromLocalStorage()">Laden</button>
+      <button style="background-color: red" onclick="saveSchoolToLocalStorage()">Speichern</button>
     </div>
 
     <div class="output-wrapper"></div>
