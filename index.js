@@ -1,4 +1,5 @@
 const countStudentsEl = document.getElementsByName("countStudents");
+
 const firstNameEL = document.getElementById("firstName");
 const lastNameEL = document.getElementById("lastName");
 const ageEL = document.getElementById("age");
@@ -9,63 +10,44 @@ const scoreMathEL = document.getElementById("math");
 
 const displayOutputEl = document.getElementsByClassName("output-wrapper")[0];
 
-document.addEventListener("DOMContentLoaded", loadSchoolFromLocalStorage);
+document.addEventListener("DOMContentLoaded", loadStudentsFromLocalStorage);
 
-let school = {
-  schoolId: 100,
-  studentsId: 0,
-  students: {},
-  studentsCount: 0,
-  schoolInfo: "Dev",
+const LOCAL_STORAGE_KEY = "students";
+
+const SCORE_TEXTS = {
+  Englisch: "english",
+  Deutsch: "german",
+  Mathe: "math",
 };
+
+let students = [];
 
 function insertStudent() {
   console.log("insertStudent");
 
-  let student = {
-    firstName: firstNameEL.value,
-    lastName: lastNameEL.value,
-    age: Number(age.value),
-    schoolClass: Number(schoolClassEl.value),
-    score: {
-      english: Number(scoreEnglishEL.value),
-      german: Number(scoreGermanEL.value),
-      math: Number(scoreMathEL.value),
-    },
-  };
-
-  let studentIdStart = school.studentsId + 1;
-  console.log(studentIdStart);
-
-  key = studentIdStart;
-  school.students[key] = student;
-  school.studentsId = key;
-  school.studentsCount += 1;
-
-  console.log(school, school.studentsId, school.students);
-
-  showStudents();
+  insertMoreStudents(1);
 }
 
 function showStudents() {
   console.log("showStudents");
-  console.log(school);
+  console.log(students);
+  clearViewFactory();
+  viewFactory();
 
-  clearOutput();
-  showOutput3();
-  setStudentsCount();
+  if (students.length > 999) {
+    countStudentsEl[0].innerHTML = `<p style="font-size: 1.5rem">${students.length}</p>`;
+  } else {
+    countStudentsEl[0].innerHTML = `${students.length}`;
+  }
 }
 
 function insertMoreStudents(number) {
   console.log("insertMoreStudents");
 
-  let studentIdStart = school.studentsId + 1;
-  //console.log(studentIdStart);
-
   for (let i = 0; i < number; i++) {
     const names = randomNames();
 
-    let student = {
+    const student = {
       firstName: names.firstName,
       lastName: names.lastName,
       age: randomNumber(5, 15),
@@ -76,23 +58,15 @@ function insertMoreStudents(number) {
         math: randomNumber(1, 6),
       },
     };
-
-    key = studentIdStart + i;
-    school.students[key] = student;
-    school.studentsId = key;
-    school.studentsCount += 1;
+    students.push(student);
   }
-
-  //console.log(school, school.studentsId, school.students);
-  console.log("school studentsId", school.studentsId);
-
-  //showStudents();
+  console.log("Students: ", students.length);
+  saveStudentsToLocalStorage();
+  showStudents();
 }
 
 function randomNumber(min, max) {
-  let number = Math.floor(Math.random() * (max - min) + 1) + min;
-  //console.log(number);
-  return number;
+  return (number = Math.floor(Math.random() * (max - min) + 1) + min);
 }
 
 function randomNames() {
@@ -136,46 +110,38 @@ function randomNames() {
   ];
 
   firstAndLastName = {
-    firstName: firstNames[Math.floor(Math.random() * firstNames.length)],
-    lastName: lastNames[Math.floor(Math.random() * lastNames.length)],
+    firstName: firstNames[randomNumber(0, firstNames.length)],
+    lastName: lastNames[randomNumber(0, lastNames.length)],
   };
 
   return firstAndLastName;
 }
 
-function showOutput3() {
-  for (let key in school.students) {
-    //console.log(key, school.students[key]);
-
+function viewFactory() {
+  for (let key in students) {
     const card = document.createElement("div");
+    card.dataset.card = key;
     const cardText = document.createTextNode(`${key}`);
     card.appendChild(cardText);
 
-    const header = document.createElement("h1");
-    const headerText = document.createTextNode(`${school.students[key].firstName}, ${school.students[key].lastName}`);
-    header.appendChild(headerText);
-    card.appendChild(header);
+    const nameHeader = document.createElement("h1");
+    const headerText = document.createTextNode(`${students[key].firstName}, ${students[key].lastName}`);
+    nameHeader.appendChild(headerText);
+    card.appendChild(nameHeader);
 
-    const age = document.createElement("h2");
-    const ageText = document.createTextNode(`Alter: ${school.students[key].age}, Klasse: ${school.students[key].schoolClass}`);
-    age.appendChild(ageText);
-    card.appendChild(age);
+    const studentAge = document.createElement("h2");
+    const ageText = document.createTextNode(`Alter: ${students[key].age}, Klasse: ${students[key].schoolClass}`);
+    studentAge.appendChild(ageText);
+    card.appendChild(studentAge);
 
-    const header2 = document.createElement("h2");
-    const header2Text = document.createTextNode("Noten:");
-    header2.appendChild(header2Text);
-    card.appendChild(header2);
+    const scoreHeader = document.createElement("h2");
+    const scoreHeaderText = document.createTextNode("Noten:");
+    scoreHeader.appendChild(scoreHeaderText);
+    card.appendChild(scoreHeader);
 
-    let scoreTexts = {
-      Englisch: "english",
-      Deutsch: "german",
-      Mathe: "math",
-    };
-
-    for (let key2 in scoreTexts) {
-      //console.log(key, scoreTexts[key]);
+    for (const scoreCount in SCORE_TEXTS) {
       const score = document.createElement("h2");
-      const scoreText = document.createTextNode(`${key2}: ${school.students[key].score[scoreTexts[key2]]}`);
+      const scoreText = document.createTextNode(`${scoreCount}: ${students[key].score[SCORE_TEXTS[scoreCount]]}`);
       score.appendChild(scoreText);
       card.appendChild(score);
     }
@@ -183,7 +149,7 @@ function showOutput3() {
     const actionBar = document.createElement("div");
     actionBar.classList.add("action-bar");
 
-    //<span class="material-symbols-outlined">delete</span>
+    // <span class="material-symbols-outlined">delete</span>
     const iconDelete = document.createElement("span");
     iconDelete.classList.add("material-symbols-outlined");
     const iconDeleteText = document.createTextNode("delete");
@@ -191,7 +157,7 @@ function showOutput3() {
     iconDelete.appendChild(iconDeleteText);
     actionBar.appendChild(iconDelete);
 
-    //<span class="material-symbols-outlined">edit</span>
+    // <span class="material-symbols-outlined">edit</span>
     const iconEdit = document.createElement("span");
     iconEdit.classList.add("material-symbols-outlined");
     const iconEditText = document.createTextNode("edit");
@@ -199,11 +165,11 @@ function showOutput3() {
     iconEdit.appendChild(iconEditText);
     actionBar.appendChild(iconEdit);
 
-    //<span class="material-symbols-outlined">save</span>
+    // <span class="material-symbols-outlined">save</span>
     const iconSave = document.createElement("span");
     iconSave.classList.add("material-symbols-outlined");
     const iconSaveText = document.createTextNode("save");
-    iconSave.setAttribute("onclick", `saveStudentToLocalStorage("${key}")`);
+    iconSave.setAttribute("onclick", `saveStudent("${key}")`);
     iconSave.appendChild(iconSaveText);
     actionBar.appendChild(iconSave);
 
@@ -216,212 +182,108 @@ function showOutput3() {
   }
 }
 
-function clearOutput() {
+function clearViewFactory() {
   displayOutputEl.innerHTML = "";
 }
 
 function deleteStudent(key) {
   console.log("DELETE!", key);
-
-  delete school.students[key];
-  school.studentsCount -= 1;
-
-  // clearOutput();
-  // showOutput3();
-  // showStudents();
-
-  const divElements = displayOutputEl.querySelectorAll(":scope > div");
-  console.log("delete -->", divElements, divElements.length);
-
-  divElements.forEach((element) => {
-    if (element.firstChild.data === key) {
-      console.log("Delete Found!", element, key);
-      element.remove();
-    }
-  });
+  students.splice(key, 1);
+  console.log("Studenst after del", students);
   showStudents();
 }
 
-//
-// 1. Version
-//
-function editStudent1(key) {
-  console.log("edit Student", key);
-  setStudentToInput(key);
-
-  const divElements = displayOutputEl.querySelectorAll("div");
-  console.log(divElements, divElements.length);
-  // console.log(divElements[2].childNodes[0].data);
-
-  divElements.forEach((element) => {
-    //console.log(element.childNodes[0].data);
-
-    if (key === element.childNodes[0].data) {
-      console.log("selectet", element);
-      element.classList.add("selected");
-    } else {
-      element.classList.remove("selected");
-    }
-  });
-}
-
-//
-// 2. Version
-//
-function editStudent2(key) {
-  console.log("edit Student", key);
-  setStudentToInput(key);
-
-  const divElements = displayOutputEl.querySelectorAll(":scope > div");
-  console.log("all div-->", divElements, divElements.length);
-
-  divElements.forEach((element) => {
-    if (element.className === "selected") {
-      console.log("First SELECTED", element);
-    }
-  });
-
-  const selectedElement = divElements[key - 1];
-  console.log("--->", selectedElement, key);
-  selectedElement.classList.add("selected");
-}
-
-//
-// 3. Version
-//
-function editStudent3(key) {
-  console.log("edit Student", key);
-  setStudentToInput(key);
-
-  //   const divElements = displayOutputEl.querySelectorAll(":scope > div");
-  //   console.log("all div-->", divElements, divElements.length);
-
-  //   const selectedElements = displayOutputEl.querySelectorAll("div.selected");
-  //   console.log("all selected-->", selectedElements);
-  //   selectedElements.forEach((element) => {
-  //     element.classList.remove("selected");
-  //   });
-
-  //   const LastSelectedElement = divElements[key - 1];
-  //   console.log("--->", LastSelectedElement, key);
-  //   LastSelectedElement.classList.add("selected");
-  // }
-
-  const selectedElements = displayOutputEl.querySelectorAll("div.selected");
-  console.log("all selected-->", selectedElements);
-  selectedElements.forEach((element) => {
-    element.classList.remove("selected");
-  });
-
-  const divElements = displayOutputEl.querySelectorAll(":scope > div");
-  console.log("all div-->", divElements, divElements.length);
-
-  divElements.forEach((element) => {
-    if (element.childNodes[0].data === key) {
-      console.log("Found!", element, key, element);
-      element.classList.add("selected");
-    }
-
-    console.log("###", element.firstChild);
-  });
-}
-
-//
-// 4. Version
-//
 function editStudent(key) {
   console.log("edit Student", key);
-  setStudentToInput(key);
 
-  const selectedElements = displayOutputEl.querySelectorAll("div.selected");
-  console.log("all selected-->", selectedElements);
-  selectedElements.forEach((element) => {
-    element.classList.remove("selected");
-  });
+  const divElement = displayOutputEl.querySelector(`[data-card="${key}"`);
+  console.log("Found div:", divElement);
 
-  const divElements = displayOutputEl.querySelectorAll(":scope > div");
-  console.log("all div-->", divElements, divElements.length);
+  // prevents double execution
+  if (divElement.dataset.selectet) {
+    return;
+  }
 
-  divElements.forEach((element) => {
-    if (element.firstChild.data === key) {
-      console.log("Found!", element, key);
-      element.classList.add("selected");
-    }
-  });
+  divElement.dataset.selectet = "true";
+
+  const html = `
+  <div class="line-wrapper-out">
+  <h3>Vorname: </h3> 
+  <input data-id="firstName" value="${students[key].firstName}">
+  <h3>Nachname: </h3>
+  <input data-id="lastName"value="${students[key].lastName}">
+  </div>
+  
+  <div class="line-wrapper-out">
+  <h3>Alter: </h3>
+  <input type="number" min="1" max="30" class="small-input" data-id="age" value="${students[key].age}">
+  <h3>Klasse: </h3>
+  <select class="small-input" id="schoolClass">
+          <option value=${students[key].schoolClass}>${students[key].schoolClass}</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+  </select>
+  </div>
+  <div class="line-wrapper-out">
+  <h3>Noten: </h3><br>
+ 
+  <div class="score">
+          <h4 for="english">Englisch:</h4>
+          <input id="english" type="number" min="1" max="6" value="${students[key].score.english}"/>
+          
+          <h4 for="german">Deutsch:</h4>
+          <input id="german" type="number" min="1" max="6" value="${students[key].score.german}"/>
+          
+          <h4 for="math">Mathe:</h4>
+          <input id="math" type="number" min="1" max="6" value="${students[key].score.math}"/>
+        </div>
+  </div>
+
+  ${divElement.innerHTML}`;
+  divElement.innerHTML = html;
 }
 
 function saveStudent(key) {
-  console.log("SAVE!-->Student in School", key);
-  school.students[key] = getStudentFromInput();
+  console.log("Save Student", key);
+  const divElement = displayOutputEl.querySelector(`[data-card="${key}"]`);
+  console.log("Found div:", divElement);
 
-  console.log(school, school.studentsId, school.students);
+  if (divElement.querySelector(`[data-id="firstName"]`) !== null) {
+    students[key].firstName = divElement.querySelector(`[data-id="firstName"]`).value;
+    students[key].lastName = divElement.querySelector(`[data-id="lastName"]`).value;
+    students[key].age = divElement.querySelector(`[data-id="age"]`).value;
+    students[key].schoolClass = divElement.querySelector("#schoolClass").value;
+    students[key].score.english = divElement.querySelector("#english").value;
+    students[key].score.german = divElement.querySelector("#german").value;
+    students[key].score.math = divElement.querySelector("#math").value;
 
-  clearOutput();
-  showOutput3();
-}
-
-function loadSchoolFromLocalStorage() {
-  console.log("LOAD! school", school);
-
-  let schoolLoad = JSON.parse(localStorage.getItem("school"));
-  console.log("after load", schoolLoad);
-
-  if (schoolLoad !== null) {
-    school = schoolLoad;
-    clearOutput();
-    showOutput3();
-
-    setStudentsCount();
+    saveStudentsToLocalStorage();
+    showStudents();
+  } else {
+    alert("Bitte zuerst die Daten ändern");
   }
 }
 
-function saveSchoolToLocalStorage() {
-  console.log("SAVE! school");
-  localStorage.setItem("school", JSON.stringify(school));
-  console.log("SAVE! school", school);
+function loadStudentsFromLocalStorage() {
+  console.log("LOAD! students", LOCAL_STORAGE_KEY);
+
+  const studentsLoad = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+
+  if (studentsLoad !== null) {
+    students = studentsLoad;
+    showStudents();
+  }
 }
 
-function saveStudentToLocalStorage(key) {
-  console.log("SAVE! Student", key);
-
-  saveStudent(key);
-
-  let student = { students: { [key]: school.students[key] } };
-  console.log(student);
-
-  localStorage.setItem("student", JSON.stringify(student));
+function saveStudentsToLocalStorage() {
+  console.log("SAVE! Students");
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(students));
 }
 
-function getStudentFromInput() {
-  let student = {
-    firstName: firstNameEL.value,
-    lastName: lastNameEL.value,
-    age: Number(age.value),
-    schoolClass: Number(schoolClassEl.value),
-    score: {
-      english: Number(scoreEnglishEL.value),
-      german: Number(scoreGermanEL.value),
-      math: Number(scoreMathEL.value),
-    },
-  };
-
-  return student;
-}
-
-function setStudentToInput(key) {
-  console.log("set Student", key);
-
-  firstNameEL.value = school.students[key].firstName;
-  lastNameEL.value = school.students[key].lastName;
-  ageEL.value = school.students[key].age;
-  schoolClassEl.value = school.students[key].schoolClass;
-  scoreEnglishEL.value = school.students[key].score["english"];
-  scoreGermanEL.value = school.students[key].score["german"];
-  scoreMathEL.value = school.students[key].score["math"];
-}
-
-function setStudentsCount() {
-  console.log("studentsCount", school.studentsCount);
-  countStudentsEl[0].innerHTML = school.studentsCount;
-  return school.studentsCount;
+function LocalStorageClear() {
+  localStorage.clear(LOCAL_STORAGE_KEY);
+  students = [];
+  showStudents();
 }
