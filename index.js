@@ -20,7 +20,7 @@ const SCORE_TEXTS = {
   Mathe: "math",
 };
 
-let students = [];
+const students = [];
 
 function insertStudent() {
   console.log("insertStudent");
