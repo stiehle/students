@@ -20,7 +20,7 @@ const SCORE_TEXTS = {
   Mathe: "math",
 };
 
-const students = [];
+let students = [];
 
 function insertStudent() {
   console.log("insertStudent");
@@ -31,11 +31,11 @@ function insertStudent() {
 function showStudents() {
   console.log("showStudents");
   console.log(students);
-  clearViewFactory();
-  viewFactory();
+  clearStudentsList();
+  createStudentsList();
 
   if (students.length > 999) {
-    countStudentsEl[0].innerHTML = `<p style="font-size: 1.5rem">${students.length}</p>`;
+    countStudentsEl[0].innerHTML = `<p class="text-small">${students.length}</p>`;
   } else {
     countStudentsEl[0].innerHTML = `${students.length}`;
   }
@@ -45,17 +45,18 @@ function insertMoreStudents(number) {
   console.log("insertMoreStudents");
 
   for (let i = 0; i < number; i++) {
-    const names = randomNames();
+    const names = getRandomNames();
+    // console.log("NAME--", names, i);
 
     const student = {
       firstName: names.firstName,
       lastName: names.lastName,
-      age: randomNumber(5, 15),
-      schoolClass: randomNumber(1, 4),
+      age: getRandomNumber(5, 15),
+      schoolClass: getRandomNumber(1, 4),
       score: {
-        english: randomNumber(1, 6),
-        german: randomNumber(1, 6),
-        math: randomNumber(1, 6),
+        english: getRandomNumber(1, 6),
+        german: getRandomNumber(1, 6),
+        math: getRandomNumber(1, 6),
       },
     };
     students.push(student);
@@ -65,11 +66,12 @@ function insertMoreStudents(number) {
   showStudents();
 }
 
-function randomNumber(min, max) {
+function getRandomNumber(min, max) {
+  //console.log("-------------", min, max);
   return (number = Math.floor(Math.random() * (max - min) + 1) + min);
 }
 
-function randomNames() {
+function getRandomNames() {
   const firstNames = [
     "Max",
     "Alfreda",
@@ -110,27 +112,29 @@ function randomNames() {
   ];
 
   firstAndLastName = {
-    firstName: firstNames[randomNumber(0, firstNames.length)],
-    lastName: lastNames[randomNumber(0, lastNames.length)],
+    firstName: firstNames[getRandomNumber(0, firstNames.length - 1)],
+    lastName: lastNames[getRandomNumber(0, lastNames.length - 1)],
   };
+
+  console.log("NAMES!--", firstAndLastName);
 
   return firstAndLastName;
 }
 
-function viewFactory() {
-  for (let key in students) {
+function createStudentsList() {
+  for (let index in students) {
     const card = document.createElement("div");
-    card.dataset.card = key;
-    const cardText = document.createTextNode(`${key}`);
+    card.dataset.id = index;
+    const cardText = document.createTextNode(`${index}`);
     card.appendChild(cardText);
 
     const nameHeader = document.createElement("h1");
-    const headerText = document.createTextNode(`${students[key].firstName}, ${students[key].lastName}`);
+    const headerText = document.createTextNode(`${students[index].firstName}, ${students[index].lastName}`);
     nameHeader.appendChild(headerText);
     card.appendChild(nameHeader);
 
     const studentAge = document.createElement("h2");
-    const ageText = document.createTextNode(`Alter: ${students[key].age}, Klasse: ${students[key].schoolClass}`);
+    const ageText = document.createTextNode(`Alter: ${students[index].age}, Klasse: ${students[index].schoolClass}`);
     studentAge.appendChild(ageText);
     card.appendChild(studentAge);
 
@@ -141,7 +145,7 @@ function viewFactory() {
 
     for (const scoreCount in SCORE_TEXTS) {
       const score = document.createElement("h2");
-      const scoreText = document.createTextNode(`${scoreCount}: ${students[key].score[SCORE_TEXTS[scoreCount]]}`);
+      const scoreText = document.createTextNode(`${scoreCount}: ${students[index].score[SCORE_TEXTS[scoreCount]]}`);
       score.appendChild(scoreText);
       card.appendChild(score);
     }
@@ -153,7 +157,7 @@ function viewFactory() {
     const iconDelete = document.createElement("span");
     iconDelete.classList.add("material-symbols-outlined");
     const iconDeleteText = document.createTextNode("delete");
-    iconDelete.setAttribute("onclick", `deleteStudent("${key}")`);
+    iconDelete.setAttribute("onclick", `deleteStudent("${index}")`);
     iconDelete.appendChild(iconDeleteText);
     actionBar.appendChild(iconDelete);
 
@@ -161,7 +165,7 @@ function viewFactory() {
     const iconEdit = document.createElement("span");
     iconEdit.classList.add("material-symbols-outlined");
     const iconEditText = document.createTextNode("edit");
-    iconEdit.setAttribute("onclick", `editStudent("${key}")`);
+    iconEdit.setAttribute("onclick", `editStudent("${index}")`);
     iconEdit.appendChild(iconEditText);
     actionBar.appendChild(iconEdit);
 
@@ -169,7 +173,7 @@ function viewFactory() {
     const iconSave = document.createElement("span");
     iconSave.classList.add("material-symbols-outlined");
     const iconSaveText = document.createTextNode("save");
-    iconSave.setAttribute("onclick", `saveStudent("${key}")`);
+    iconSave.setAttribute("onclick", `saveStudent("${index}")`);
     iconSave.appendChild(iconSaveText);
     actionBar.appendChild(iconSave);
 
@@ -182,44 +186,44 @@ function viewFactory() {
   }
 }
 
-function clearViewFactory() {
+function clearStudentsList() {
   displayOutputEl.innerHTML = "";
 }
 
-function deleteStudent(key) {
-  console.log("DELETE!", key);
-  students.splice(key, 1);
+function deleteStudent(index) {
+  console.log("DELETE!", index);
+  students.splice(index, 1);
   console.log("Studenst after del", students);
   showStudents();
 }
 
-function editStudent(key) {
-  console.log("edit Student", key);
+function editStudent(index) {
+  console.log("edit Student", index);
 
-  const divElement = displayOutputEl.querySelector(`[data-card="${key}"`);
+  const divElement = displayOutputEl.querySelector(`[data-id="${index}"`);
   console.log("Found div:", divElement);
 
   // prevents double execution
-  if (divElement.dataset.selectet) {
+  if (divElement.dataset.selected) {
     return;
   }
 
-  divElement.dataset.selectet = "true";
+  divElement.dataset.selected = "true";
 
   const html = `
   <div class="line-wrapper-out">
   <h3>Vorname: </h3> 
-  <input data-id="firstName" value="${students[key].firstName}">
+  <input data-id="firstName" value="${students[index].firstName}">
   <h3>Nachname: </h3>
-  <input data-id="lastName"value="${students[key].lastName}">
+  <input data-id="lastName"value="${students[index].lastName}">
   </div>
   
   <div class="line-wrapper-out">
   <h3>Alter: </h3>
-  <input type="number" min="1" max="30" class="small-input" data-id="age" value="${students[key].age}">
+  <input type="number" min="1" max="30" class="small-input" data-id="age" value="${students[index].age}">
   <h3>Klasse: </h3>
   <select class="small-input" id="schoolClass">
-          <option value=${students[key].schoolClass}>${students[key].schoolClass}</option>
+          <option value=${students[index].schoolClass}>${students[index].schoolClass}</option>
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -231,13 +235,13 @@ function editStudent(key) {
  
   <div class="score">
           <h4 for="english">Englisch:</h4>
-          <input id="english" type="number" min="1" max="6" value="${students[key].score.english}"/>
+          <input id="english" type="number" min="1" max="6" value="${students[index].score.english}"/>
           
           <h4 for="german">Deutsch:</h4>
-          <input id="german" type="number" min="1" max="6" value="${students[key].score.german}"/>
+          <input id="german" type="number" min="1" max="6" value="${students[index].score.german}"/>
           
           <h4 for="math">Mathe:</h4>
-          <input id="math" type="number" min="1" max="6" value="${students[key].score.math}"/>
+          <input id="math" type="number" min="1" max="6" value="${students[index].score.math}"/>
         </div>
   </div>
 
@@ -245,19 +249,19 @@ function editStudent(key) {
   divElement.innerHTML = html;
 }
 
-function saveStudent(key) {
-  console.log("Save Student", key);
-  const divElement = displayOutputEl.querySelector(`[data-card="${key}"]`);
+function saveStudent(index) {
+  console.log("Save Student", index);
+  const divElement = displayOutputEl.querySelector(`[data-id="${index}"]`);
   console.log("Found div:", divElement);
 
   if (divElement.querySelector(`[data-id="firstName"]`) !== null) {
-    students[key].firstName = divElement.querySelector(`[data-id="firstName"]`).value;
-    students[key].lastName = divElement.querySelector(`[data-id="lastName"]`).value;
-    students[key].age = divElement.querySelector(`[data-id="age"]`).value;
-    students[key].schoolClass = divElement.querySelector("#schoolClass").value;
-    students[key].score.english = divElement.querySelector("#english").value;
-    students[key].score.german = divElement.querySelector("#german").value;
-    students[key].score.math = divElement.querySelector("#math").value;
+    students[index].firstName = divElement.querySelector(`[data-id="firstName"]`).value;
+    students[index].lastName = divElement.querySelector(`[data-id="lastName"]`).value;
+    students[index].age = divElement.querySelector(`[data-id="age"]`).value;
+    students[index].schoolClass = divElement.querySelector("#schoolClass").value;
+    students[index].score.english = divElement.querySelector("#english").value;
+    students[index].score.german = divElement.querySelector("#german").value;
+    students[index].score.math = divElement.querySelector("#math").value;
 
     saveStudentsToLocalStorage();
     showStudents();
@@ -282,7 +286,7 @@ function saveStudentsToLocalStorage() {
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(students));
 }
 
-function LocalStorageClear() {
+function clearLocalStorage() {
   localStorage.clear(LOCAL_STORAGE_KEY);
   students = [];
   showStudents();

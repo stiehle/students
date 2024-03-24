@@ -33,6 +33,18 @@
   font-size: 2.5rem;
   margin: auto 0;
 }
+
+.text-small {
+  font-size: 2rem;
+}
+
+.text-color-1 {
+  background-color: rgb(131, 211, 131);
+}
+.text-color-2 {
+  background-color: red;
+}
+
 .menu-text-properties[name="countStudents"] {
   background-color: rgb(230, 63, 63);
   color: yellow;
